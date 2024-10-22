@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
+import { TaskListComponent } from './task-list/task-list.component'; // Ajusta la ruta según tu estructura de carpetas
 import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [TaskListComponent, RouterOutlet],  
 })
 export class AppComponent {
-  title = 'task-manager';
 }

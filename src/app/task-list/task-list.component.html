@@ -1,0 +1,66 @@
+<div class="p-6 max-w-2xl mx-auto bg-white shadow-lg rounded-lg">
+  <div class="mb-4 text-center">
+    <h2 class="text-xl font-semibold">Bienvenido, {{ usuario.name }}</h2>
+  </div>
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Tareas</h1>
+    <button (click)="logOut()" class="p-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors">Logout</button>
+  </div>
+
+  <button (click)="showForm = !showForm" class="mt-4 p-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors">
+    {{ showForm ? 'Cancelar' : 'Agregar Nueva Tarea' }}
+  </button>
+
+  <form *ngIf="showForm" (ngSubmit)="addTask()" #taskForm="ngForm" class="mt-4 bg-gray-100 p-4 rounded-lg shadow-md">
+    <input
+      type="text"
+      placeholder="Agregar nueva tarea"
+      [(ngModel)]="newTaskTitle"
+      name="taskTitle"
+      required
+      class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <textarea
+      placeholder="Descripción (opcional)"
+      [(ngModel)]="newTaskDescription"
+      name="taskDescription"
+      class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    ></textarea>
+    <input
+      type="date"
+      [(ngModel)]="newTaskDueDate"
+      name="taskDueDate"
+      class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+    <select
+      [(ngModel)]="newTaskPriority"
+      name="taskPriority"
+      class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
+    </select>
+    <button
+      type="submit"
+      class="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+      {{ editingTaskId ? 'Actualizar Tarea' : 'Agregar Tarea' }}
+    </button>
+  </form>
+
+  <ul class="mt-4 space-y-4">
+    <li *ngFor="let task of tasks" [ngClass]="getPriorityColor(task.priority)" class="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+      <div>
+        <strong class="text-lg">{{ task.title }}</strong>
+        <p *ngIf="task.description" class="text-gray-600">{{ task.description }}</p>
+        <p class="text-gray-500">Fecha de Vencimiento: {{ task.dueDate }}</p>
+        <p class="text-gray-500">Prioridad: {{ task.priority }}</p>
+        <div *ngIf="isDeadlineApproaching(task.dueDate)" class="text-red-600 font-semibold">
+          ¡Atención! La fecha de vencimiento está cerca.
+        </div>
+      </div>
+      <div class="flex space-x-2 mt-2">
+        <button (click)="startEditing(task)" class="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors">Editar</button>
+        <button (click)="deleteTask(task._id)" class="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors">Eliminar</button>
+      </div>
+    </li>
+  </ul>
+</div>
