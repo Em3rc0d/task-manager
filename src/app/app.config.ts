@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 const uri = "http://localhost:4200";
+const uri1 = "https://task-manager-plum-xi.vercel.app";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,7 +17,7 @@ export const appConfig: ApplicationConfig = {
       domain: 'dev-gw3t1o22is7w2ptm.us.auth0.com',
       clientId: 'Zeq3IWP7ZdJSDoRscp8s6YIOpFrSYbHY',
       authorizationParams: {
-        redirect_uri: typeof window !== 'undefined' ? window.location.origin : "${uri}"
+        redirect_uri: typeof window !== 'undefined' ? window.location.origin : "${uri1}"
       }
     }),
   ],
