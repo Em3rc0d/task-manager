@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class TaskService {
-  private apiUrl = 'https://backend-gbtc.vercel.app/api/tasks';
+  private apiUrl = 'https://backend-task-m.vercel.app/tasks';
 
   constructor(private http: HttpClient) {}
 
