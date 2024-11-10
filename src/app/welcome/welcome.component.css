@@ -1,0 +1,49 @@
+/* Animación para el fondo */
+@keyframes backgroundMovement {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(20px); } /* Aumentamos el movimiento */
+    100% { transform: translateX(0); }
+  }
+  
+  .animate-background {
+    animation: backgroundMovement 10s ease-in-out infinite; /* Aumentamos la duración */
+  }
+  
+  /* Animación de fade-in para los elementos */
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+  
+  .animate-fadeIn {
+    animation: fadeIn 1s forwards;
+  }
+  
+  /* Animación de slide-in-up para los elementos */
+  @keyframes slideInUp {
+    0% { transform: translateY(50px); opacity: 0; } /* Aumentamos el desplazamiento */
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  
+  .animate-slideInUp {
+    animation: slideInUp 1s forwards;
+  }
+  
+  /* Delays para los elementos */
+  .animation-delay-300 {
+    animation-delay: 0.3s;
+  }
+  
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+  
+  /* Agregar un ligero movimiento al botón al pasar el ratón */
+  button {
+    transition: transform 0.2s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.05); /* Escala ligeramente el botón */
+  }
+  
