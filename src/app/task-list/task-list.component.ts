@@ -237,6 +237,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
         },
       });
     }
+    this.loadTasks();
   }
 
   // Actualizar una tarea existente
