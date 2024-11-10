@@ -16,6 +16,7 @@ import { ChangeDetectorRef } from '@angular/core';
 export class TaskListComponent implements OnInit, OnDestroy {
   isQuoteModalOpen: boolean = false;  // Variable para manejar el estado del modal de cita
   isLocationModalOpen: boolean = false;  // Variable para manejar el estado del modal de ubicación
+  isHolidayModalOpen: boolean = false;  // Variable para manejar el estado del modal de días festivos
   tasks: any[] = [];  // Array para almacenar las tareas
   usuario: any = null;  // Almacena el usuario autenticado
   newTaskTitle: string = '';  // Título de la nueva tarea
