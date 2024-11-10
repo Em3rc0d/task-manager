@@ -4,6 +4,7 @@ import { TaskService } from '../../task.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { Subscription } from 'rxjs';
+import * as L from 'leaflet';
 
 @Component({
   selector: 'app-task-list',
@@ -123,6 +124,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
         .addTo(this.map)
         .bindPopup('Estás aquí.')
         .openPopup();
+    }else {
+      console.error('leaflet no está disponible en el navegador.');
     }
   }
 
@@ -250,17 +253,21 @@ export class TaskListComponent implements OnInit, OnDestroy {
     const today = new Date();
     const thirtyDaysFromNow = new Date(today);
     thirtyDaysFromNow.setDate(today.getDate() + 30);
-
+  
     this.taskService.getHolidays().subscribe({
       next: (response) => {
-        const holidays = response.response.holidays
-          .map((holiday: any) => {
-            holiday.date.iso = new Date(holiday.date.iso);
-            return holiday;
-          })
-          .filter((holiday: any) => holiday.date.iso >= today && holiday.date.iso <= thirtyDaysFromNow)
-          .sort((a: any, b: any) => a.date.iso.getTime() - b.date.iso.getTime());
-
+        // Verifica si el valor es un arreglo
+        const holidays = Array.isArray(response.response.holidays)
+          ? response.response.holidays
+              .map((holiday: any) => {
+                holiday.date.iso = new Date(holiday.date.iso);
+                return holiday;
+              })
+              .filter((holiday: any) => holiday.date.iso >= today && holiday.date.iso <= thirtyDaysFromNow)
+              .sort((a: any, b: any) => a.date.iso.getTime() - b.date.iso.getTime())
+          : [];  // Si no es un arreglo, inicializar como vacío.
+  
+        this.holidays = holidays;
       },
       error: (err) => {
         console.error('Error al obtener los días festivos:', err);
@@ -268,7 +275,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
   
   
   getRandomQuote(): void {
