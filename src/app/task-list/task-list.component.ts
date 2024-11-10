@@ -48,7 +48,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     country: string;
     timezone: number;
   } | null = null;
-  
 
   constructor(
     private taskService: TaskService,
@@ -384,7 +383,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   closeLocationModal() {
     this.isLocationModalOpen = false;
   }
-  
+
   // Cerrar sesión
   logOut(): void {
     this.auth.logout();

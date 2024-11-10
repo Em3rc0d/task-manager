@@ -1,9 +1,15 @@
-<div class="w-screen flex justify-between items-start p-6 max-w-7xl mx-auto space-x-6">
+<div
+  class="w-full flex flex-col md:flex-row justify-between items-start p-6 max-w-7xl mx-auto space-y-6 md:space-y-0 md:space-x-6"
+>
   <!-- Contenedor Principal para Task Manager -->
-  <div class="w-4/5 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 shadow-xl rounded-lg p-6 flex-1">
+  <div
+    class="w-full md:w-4/5 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 shadow-xl rounded-lg p-6 flex-1"
+  >
     <!-- Encabezado -->
     <div class="mb-4 text-center">
-      <h2 class="text-xl font-semibold text-blue-700">Bienvenido, {{ usuario.name }}</h2>
+      <h2 class="text-xl font-semibold text-blue-700">
+        Bienvenido, {{ usuario.name }}
+      </h2>
     </div>
 
     <!-- Título y Botón Logout -->
@@ -74,11 +80,13 @@
       <li
         *ngFor="let task of tasks"
         [ngClass]="getPriorityColor(task.priority)"
-        class="p-4 border border-gray-200 rounded-lg shadow-md  hover:shadow-xl transition-shadow ease-in-out duration-300"
+        class="p-4 border border-gray-200 rounded-lg shadow-md hover:shadow-xl transition-shadow ease-in-out duration-300"
       >
         <div>
           <strong class="text-lg text-gray-900">{{ task.title }}</strong>
-          <p *ngIf="task.description" class="text-gray-600">{{ task.description }}</p>
+          <p *ngIf="task.description" class="text-gray-600">
+            {{ task.description }}
+          </p>
           <p class="text-gray-500">Fecha de Vencimiento: {{ task.dueDate }}</p>
           <p class="text-gray-500">Prioridad: {{ task.priority }}</p>
           <div
@@ -107,7 +115,7 @@
   </div>
 
   <!-- Botones para los Modales -->
-  <div class="w-1/5 mt-6 space-y-4">
+  <div class="w-full md:w-1/5 mt-6 space-y-4">
     <button
       (click)="openQuoteModal()"
       class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
@@ -132,8 +140,11 @@
     role="dialog"
     aria-hidden="true"
   >
-    <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
-      <h2 class="text-xl font-semibold text-center mb-4 text-blue-700" id="quoteModalLabel">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full sm:w-1/3">
+      <h2
+        class="text-xl font-semibold text-center mb-4 text-blue-700"
+        id="quoteModalLabel"
+      >
         Cita Aleatoria
       </h2>
       <div class="text-center">
@@ -158,7 +169,7 @@
     role="dialog"
     aria-hidden="true"
   >
-    <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-full sm:w-1/3">
       <div *ngIf="location" class="mt-6 text-center">
         <p class="text-xl font-semibold text-gray-800">Tu Ubicación:</p>
         <p class="text-lg text-gray-600">
@@ -170,7 +181,7 @@
           <span class="font-bold text-blue-600">{{ location.longitude }}</span>
         </p>
       </div>
-  
+
       <!-- Mapa -->
       <div
         id="map"
@@ -178,7 +189,7 @@
         style="height: 200px"
         aria-label="Mapa de ubicación"
       ></div>
-  
+
       <!-- Clima -->
       <div
         *ngIf="weather"
@@ -198,21 +209,23 @@
         <img [src]="weather.iconUrl" alt="Clima" class="mt-4" />
         <p class="text-sm text-gray-600">Humedad: {{ weather.humidity }}%</p>
         <p class="text-sm text-gray-600">Presión: {{ weather.pressure }} hPa</p>
-        <p class="text-sm text-gray-600">Viento: {{ weather.wind_speed }} m/s</p>
-      <p class="text-sm text-gray-600">
-        Dirección del viento: {{ weather.wind_deg }}°
-      </p>
-      <p class="text-sm text-gray-600">
-        Ráfagas de viento: {{ weather.wind_gust }} m/s
-      </p>
-      <p class="text-sm text-gray-600">
-        Cobertura Nubosa: {{ weather.clouds }}%
-      </p>
-      <p class="text-sm text-gray-600">
-        Visibilidad: {{ weather.visibility }} m
-      </p>
+        <p class="text-sm text-gray-600">
+          Viento: {{ weather.wind_speed }} m/s
+        </p>
+        <p class="text-sm text-gray-600">
+          Dirección del viento: {{ weather.wind_deg }}°
+        </p>
+        <p class="text-sm text-gray-600">
+          Ráfagas de viento: {{ weather.wind_gust }} m/s
+        </p>
+        <p class="text-sm text-gray-600">
+          Cobertura Nubosa: {{ weather.clouds }}%
+        </p>
+        <p class="text-sm text-gray-600">
+          Visibilidad: {{ weather.visibility }} m
+        </p>
       </div>
-  
+      <!-- Botón Cerrar -->
       <div class="mt-4 flex justify-center">
         <button
           (click)="closeLocationModal()"
