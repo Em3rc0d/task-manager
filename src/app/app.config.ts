@@ -17,8 +17,8 @@ export const appConfig: ApplicationConfig = {
       domain: 'dev-gw3t1o22is7w2ptm.us.auth0.com',
       clientId: 'Zeq3IWP7ZdJSDoRscp8s6YIOpFrSYbHY',
       authorizationParams: {
-        redirect_uri: typeof window !== 'undefined' ? window.location.origin : "${uri1}"
+        redirect_uri: typeof window !== 'undefined' ? window.location.origin : "${uri}"
       }
-    }),
+    })
   ],
 };

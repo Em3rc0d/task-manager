@@ -8,6 +8,8 @@ import { Observable } from 'rxjs';
 })
 export class TaskService {
   private apiUrl = 'https://backend-task-m.vercel.app/tasks';
+  private apiUrlHolidays = 'https://calendarific.com/api/v2/holidays?api_key=L1sOG3Gak8ftPR9dhD5n0UGp4y9O46qk&country=PE&year=2024&type=national'
+  private translateUrl = 'https://libretranslate.de/translate';
 
   constructor(private http: HttpClient) {}
 
@@ -25,5 +27,18 @@ export class TaskService {
 
   deleteTask(id: string): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
+  }
+  
+  getHolidays(): Observable<any> {
+    return this.http.get<any>(this.apiUrlHolidays);
+  }
+
+  translateText(text: string, targetLang: string = 'es'): Observable<any> {
+    return this.http.post<any>(this.translateUrl, {
+      q: text,
+      source: 'en',
+      target: targetLang,
+      format: 'text'
+    });
   }
 }
