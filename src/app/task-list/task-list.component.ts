@@ -4,7 +4,6 @@ import { TaskService } from '../../task.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { Subscription } from 'rxjs';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-task-list',
@@ -52,8 +51,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   constructor(
     private taskService: TaskService,
-    private auth: AuthService,
-    private cdr: ChangeDetectorRef
+    private auth: AuthService
   ) {}
 
   // Al iniciar el componente, se obtiene el usuario y las tareas
@@ -62,10 +60,10 @@ export class TaskListComponent implements OnInit, OnDestroy {
       if (user) {
         this.usuario = user;
         this.loadTasks();  
+        this.loadHolidays();
+        this.getRandomQuote();
       }
     });
-    this.loadHolidays();
-    this.getRandomQuote();
   }
 
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
@@ -263,17 +261,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
           .filter((holiday: any) => holiday.date.iso >= today && holiday.date.iso <= thirtyDaysFromNow)
           .sort((a: any, b: any) => a.date.iso.getTime() - b.date.iso.getTime());
 
-        // Traducir todos los días festivos
-        Promise.all(
-          holidays.map((holiday: any) =>
-            this.translateText(holiday.name, 'es')
-              .then(translated => holiday.name = translated)
-              .catch(error => console.error('Error al traducir el día festivo:', error))
-          )
-        ).then(() => {
-          this.holidays = holidays;
-          this.cdr.detectChanges();  // Asegurarse de que la vista se actualice
-        });
       },
       error: (err) => {
         console.error('Error al obtener los días festivos:', err);
@@ -289,48 +276,13 @@ export class TaskListComponent implements OnInit, OnDestroy {
       .then(response => response.json())
       .then(data => {
         const quote = data.content;  // Obtener la cita
-        this.translateText(quote, 'es')  // Traducir la cita al español
-          .then(translated => {
-            this.quote = translated;  // Asignar la cita traducida
-          })
-          .catch(error => {
-            console.error('Error al traducir la cita:', error);
-          });
+        this.quote = quote;
       })
       .catch(error => {
         console.error('Error al obtener la cita:', error);
       });
   }
   
-  translateText(holidayName: string, targetLang: string): Promise<string> {
-    const url = 'https://libretranslate.de/translate';
-    const data = {
-      q: holidayName,
-      source: 'en', 
-      target: targetLang,
-      format: 'text',
-    };
-  
-    return fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-      return data.translatedText;
-    })
-    .catch(error => {
-      console.error('Error al traducir:', error);
-      return holidayName;  // Devuelve el nombre original si hay un error
-    })
-    .finally(() => {
-      // Llamar a detectChanges para que Angular actualice la vista
-      this.cdr.detectChanges();
-    });
-  }
   
   getWeather(latitude: number, longitude: number): void {
     const apiKey = '2a0bd20450d7b6125ed140498e6ddc11';
