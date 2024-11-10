@@ -49,6 +49,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
     country: string;
     timezone: number;
   } | null = null;
+  private leafletMap!: L.Map;  // Cambiar el nombre de la variable
+
 
   constructor(
     private taskService: TaskService,
@@ -71,7 +73,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
   ngOnDestroy(): void {
     this.userSubscription?.unsubscribe();
-    this.map?.remove();
+    this.leafletMap?.remove();
   }
 
   // Obtener la ubicación del usuario usando la API de geolocalización
@@ -116,19 +118,20 @@ export class TaskListComponent implements OnInit, OnDestroy {
   private async initMap(lat: number, lng: number, zoom: number = 13): Promise<void> {
     if (typeof window !== 'undefined') {
       const L = await import('leaflet');
-      this.map = L.map('map').setView([lat, lng], zoom);
+      this.leafletMap = L.map('map').setView([lat, lng], zoom);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.map);
+      }).addTo(this.leafletMap);
       L.marker([lat, lng])
-        .addTo(this.map)
+        .addTo(this.leafletMap)
         .bindPopup('Estás aquí.')
         .openPopup();
-    }else {
-      console.error('leaflet no está disponible en el navegador.');
+    } else {
+      console.error('Leaflet no está disponible en el navegador.');
     }
   }
+  
 
   // Ordenar las tareas por fecha de vencimiento
   sortTasks(tasks: any[]): any[] {
