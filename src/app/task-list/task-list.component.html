@@ -1,17 +1,17 @@
-<div class="flex justify-between items-start p-6 max-w-7xl mx-auto space-x-6">
+<div class="w-screen flex justify-between items-start p-6 max-w-7xl mx-auto space-x-6">
   <!-- Contenedor Principal para Task Manager -->
-  <div class="w-3/4 bg-white shadow-lg rounded-lg p-6 flex-1">
+  <div class="w-4/5 bg-gradient-to-r from-gray-100 via-gray-200 to-gray-300 shadow-xl rounded-lg p-6 flex-1">
     <!-- Encabezado -->
     <div class="mb-4 text-center">
-      <h2 class="text-xl font-semibold">Bienvenido, {{ usuario.name }}</h2>
+      <h2 class="text-xl font-semibold text-blue-700">Bienvenido, {{ usuario.name }}</h2>
     </div>
 
     <!-- Título y Botón Logout -->
     <div class="flex items-center justify-between">
-      <h1 class="text-2xl font-bold">Tareas</h1>
+      <h1 class="text-2xl font-bold text-gray-800">Tareas</h1>
       <button
         (click)="logOut()"
-        class="p-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+        class="p-2 bg-red-600 text-white rounded hover:bg-red-700 transition-all ease-in-out duration-200"
       >
         Logout
       </button>
@@ -20,7 +20,7 @@
     <!-- Botón para mostrar el formulario de tareas -->
     <button
       (click)="showForm = !showForm"
-      class="mt-4 p-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+      class="mt-4 p-2 bg-green-600 text-white rounded hover:bg-green-700 transition-all ease-in-out duration-200"
     >
       {{ showForm ? "Cancelar" : "Agregar Nueva Tarea" }}
     </button>
@@ -30,7 +30,7 @@
       *ngIf="showForm"
       (ngSubmit)="addTask()"
       #taskForm="ngForm"
-      class="mt-4 bg-gray-100 p-4 rounded-lg shadow-md"
+      class="mt-4 bg-gray-200 p-4 rounded-lg shadow-lg transition-all ease-in-out duration-200"
     >
       <input
         type="text"
@@ -38,24 +38,24 @@
         [(ngModel)]="newTaskTitle"
         name="taskTitle"
         required
-        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
       />
       <textarea
         placeholder="Descripción (opcional)"
         [(ngModel)]="newTaskDescription"
         name="taskDescription"
-        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
       ></textarea>
       <input
         type="date"
         [(ngModel)]="newTaskDueDate"
         name="taskDueDate"
-        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
       />
       <select
         [(ngModel)]="newTaskPriority"
         name="taskPriority"
-        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+        class="border border-gray-300 p-2 w-full mb-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
       >
         <option *ngFor="let priority of priorities" [value]="priority">
           {{ priority }}
@@ -63,7 +63,7 @@
       </select>
       <button
         type="submit"
-        class="mt-2 p-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        class="mt-2 p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-all ease-in-out duration-200"
       >
         {{ editingTaskId ? "Actualizar Tarea" : "Agregar Tarea" }}
       </button>
@@ -74,13 +74,11 @@
       <li
         *ngFor="let task of tasks"
         [ngClass]="getPriorityColor(task.priority)"
-        class="p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        class="p-4 border border-gray-200 rounded-lg shadow-md  hover:shadow-xl transition-shadow ease-in-out duration-300"
       >
         <div>
-          <strong class="text-lg">{{ task.title }}</strong>
-          <p *ngIf="task.description" class="text-gray-600">
-            {{ task.description }}
-          </p>
+          <strong class="text-lg text-gray-900">{{ task.title }}</strong>
+          <p *ngIf="task.description" class="text-gray-600">{{ task.description }}</p>
           <p class="text-gray-500">Fecha de Vencimiento: {{ task.dueDate }}</p>
           <p class="text-gray-500">Prioridad: {{ task.priority }}</p>
           <div
@@ -93,88 +91,114 @@
         <div class="flex space-x-2 mt-2">
           <button
             (click)="startEditing(task)"
-            class="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+            class="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-all ease-in-out duration-200"
           >
             Editar
           </button>
           <button
             (click)="deleteTask(task._id)"
-            class="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+            class="p-2 bg-red-500 text-white rounded hover:bg-red-600 transition-all ease-in-out duration-200"
           >
             Eliminar
           </button>
         </div>
       </li>
     </ul>
+  </div>
 
-    <!-- Cita Aleatoria -->
-    <div class="w-full max-w-xl bg-white shadow-lg rounded-lg p-6 mx-auto mt-6">
-      <h2 class="text-xl font-semibold text-center mb-4">Cita Aleatoria</h2>
-      <button
-        (click)="getRandomQuote()"
-        class="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-      >
-        Obtener Cita
-      </button>
-      <div *ngIf="quote" class="mt-6 text-center">
+  <!-- Botones para los Modales -->
+  <div class="w-1/5 mt-6 space-y-4">
+    <button
+      (click)="openQuoteModal()"
+      class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
+    >
+      Obtener Cita
+    </button>
+
+    <button
+      (click)="openLocationModal()"
+      class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
+      aria-label="Obtener ubicación actual"
+    >
+      Ver Ubicación
+    </button>
+  </div>
+
+  <!-- Modal de Cita Aleatoria -->
+  <div
+    *ngIf="isQuoteModalOpen"
+    class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
+    aria-labelledby="quoteModalLabel"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+      <h2 class="text-xl font-semibold text-center mb-4 text-blue-700" id="quoteModalLabel">
+        Cita Aleatoria
+      </h2>
+      <div class="text-center">
         <p class="text-lg text-gray-800">"{{ quote }}"</p>
       </div>
-      <div *ngIf="!quote" class="mt-6 text-center text-gray-600">
-        <p>Haz clic en el botón para obtener una cita.</p>
+      <div class="mt-4 flex justify-center">
+        <button
+          (click)="closeQuoteModal()"
+          class="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200"
+        >
+          Cerrar
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- Contenedor Mapa y Ubicación -->
-  <div class="w-1/4 bg-white shadow-lg rounded-lg p-6">
-    <button
-      (click)="getLocation()"
-      class="w-full p-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-      aria-label="Obtener ubicación actual"
-    >
-      Obtener Ubicación
-    </button>
-
-    <div *ngIf="location" class="mt-6 text-center">
-      <p class="text-xl font-semibold text-gray-800">Tu Ubicación:</p>
-      <p class="text-lg text-gray-600">
-        Latitud:
-        <span class="font-bold text-blue-600">{{ location.latitude }}</span>
-      </p>
-      <p class="text-lg text-gray-600">
-        Longitud:
-        <span class="font-bold text-blue-600">{{ location.longitude }}</span>
-      </p>
-    </div>
-
-    <!-- Mapa -->
-    <div
-      id="map"
-      class="mt-6 rounded-lg shadow-md border-gray-200"
-      style="height: 200px"
-      aria-label="Mapa de ubicación"
-    ></div>
-
-    <!-- Clima -->
-    <div
-      *ngIf="weather"
-      class="flex flex-col mt-6 justify-center text-center items-center"
-    >
-      <p class="text-lg text-gray-800">Temperatura: {{ weather.temp }}°C</p>
-      <p class="text-lg text-gray-800">
-        Sensación Térmica: {{ weather.feels_like }}°C
-      </p>
-      <p class="text-lg text-gray-800">
-        Temperatura Mínima: {{ weather.temp_min }}°C
-      </p>
-      <p class="text-lg text-gray-800">
-        Temperatura Máxima: {{ weather.temp_max }}°C
-      </p>
-      <p class="text-sm text-gray-600">{{ weather.description }}</p>
-      <img [src]="weather.iconUrl" alt="Clima" class="mt-4" />
-      <p class="text-sm text-gray-600">Humedad: {{ weather.humidity }}%</p>
-      <p class="text-sm text-gray-600">Presión: {{ weather.pressure }} hPa</p>
-      <p class="text-sm text-gray-600">Viento: {{ weather.wind_speed }} m/s</p>
+  <!-- Modal de Ubicación -->
+  <div
+    *ngIf="isLocationModalOpen"
+    class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
+    aria-labelledby="locationModalLabel"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div class="bg-white p-6 rounded-lg shadow-xl w-1/3">
+      <div *ngIf="location" class="mt-6 text-center">
+        <p class="text-xl font-semibold text-gray-800">Tu Ubicación:</p>
+        <p class="text-lg text-gray-600">
+          Latitud:
+          <span class="font-bold text-blue-600">{{ location.latitude }}</span>
+        </p>
+        <p class="text-lg text-gray-600">
+          Longitud:
+          <span class="font-bold text-blue-600">{{ location.longitude }}</span>
+        </p>
+      </div>
+  
+      <!-- Mapa -->
+      <div
+        id="map"
+        class="mt-6 rounded-lg shadow-md border-gray-200"
+        style="height: 200px"
+        aria-label="Mapa de ubicación"
+      ></div>
+  
+      <!-- Clima -->
+      <div
+        *ngIf="weather"
+        class="flex flex-col mt-6 justify-center text-center items-center"
+      >
+        <p class="text-lg text-gray-800">Temperatura: {{ weather.temp }}°C</p>
+        <p class="text-lg text-gray-800">
+          Sensación Térmica: {{ weather.feels_like }}°C
+        </p>
+        <p class="text-lg text-gray-800">
+          Temperatura Mínima: {{ weather.temp_min }}°C
+        </p>
+        <p class="text-lg text-gray-800">
+          Temperatura Máxima: {{ weather.temp_max }}°C
+        </p>
+        <p class="text-sm text-gray-600">{{ weather.description }}</p>
+        <img [src]="weather.iconUrl" alt="Clima" class="mt-4" />
+        <p class="text-sm text-gray-600">Humedad: {{ weather.humidity }}%</p>
+        <p class="text-sm text-gray-600">Presión: {{ weather.pressure }} hPa</p>
+        <p class="text-sm text-gray-600">Viento: {{ weather.wind_speed }} m/s</p>
       <p class="text-sm text-gray-600">
         Dirección del viento: {{ weather.wind_deg }}°
       </p>
@@ -187,30 +211,16 @@
       <p class="text-sm text-gray-600">
         Visibilidad: {{ weather.visibility }} m
       </p>
-    </div>
-
-    <!-- Días Festivos -->
-    <div *ngIf="holidays.length > 0" class="mt-6">
-      <h3 class="text-lg font-semibold text-gray-700">
-        Próximos Días Festivos
-      </h3>
-      <p class="text-sm text-gray-500 mb-4">En los próximos 30 días:</p>
-      <ul class="space-y-2">
-        <li
-          *ngFor="let holiday of holidays"
-          class="p-2 border border-gray-300 rounded-lg hover:bg-gray-100"
+      </div>
+  
+      <div class="mt-4 flex justify-center">
+        <button
+          (click)="closeLocationModal()"
+          class="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200"
         >
-          <strong class="block text-md text-gray-800">
-            {{ holiday.date.iso | date : "EEEE, dd MMMM yyyy" }}
-          </strong>
-          <p class="text-sm text-gray-600">{{ holiday.name }}</p>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Mensaje si no hay días festivos -->
-    <div *ngIf="holidays.length === 0" class="mt-6 text-center text-gray-600">
-      <p>No hay días festivos próximos.</p>
+          Cerrar
+        </button>
+      </div>
     </div>
   </div>
 </div>

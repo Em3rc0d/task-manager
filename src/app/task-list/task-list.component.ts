@@ -14,8 +14,8 @@ import { ChangeDetectorRef } from '@angular/core';
   imports: [FormsModule, CommonModule]  // Importa FormsModule y CommonModule
 })
 export class TaskListComponent implements OnInit, OnDestroy {
-  openLocationModal = false;  // Control del modal de ubicación
-  openQuoteModal = false;     // Control del modal de cita
+  isQuoteModalOpen: boolean = false;  // Variable para manejar el estado del modal de cita
+  isLocationModalOpen: boolean = false;  // Variable para manejar el estado del modal de ubicación
   tasks: any[] = [];  // Array para almacenar las tareas
   usuario: any = null;  // Almacena el usuario autenticado
   newTaskTitle: string = '';  // Título de la nueva tarea
@@ -365,6 +365,26 @@ export class TaskListComponent implements OnInit, OnDestroy {
       });
   }
 
+  // Métodos para abrir y cerrar el modal de cita
+  openQuoteModal() {
+    this.isQuoteModalOpen = true;
+    this.getRandomQuote();  // Obtener cita aleatoria cuando se abre el modal
+  }
+
+  closeQuoteModal() {
+    this.isQuoteModalOpen = false;
+  }
+
+  // Métodos para abrir y cerrar el modal de ubicación
+  openLocationModal() {
+    this.isLocationModalOpen = true;
+    this.getLocation();  // Obtener ubicación cuando se abre el modal
+  }
+
+  closeLocationModal() {
+    this.isLocationModalOpen = false;
+  }
+  
   // Cerrar sesión
   logOut(): void {
     this.auth.logout();
