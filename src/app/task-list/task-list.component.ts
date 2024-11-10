@@ -154,7 +154,11 @@ export class TaskListComponent implements OnInit, OnDestroy {
     if (this.usuario) {
       this.taskService.getTasksByUserId(this.usuario.sub).subscribe({
         next: (data) => {
-          this.tasks = this.sortTasks(data);  // Ordenar las tareas por fecha
+          // Filtrar las tareas para mostrar solo las que no han vencido
+          const tasksNoVencidas = data.filter(task => new Date(task.fechaVencimiento) > new Date());
+          
+          // Ordenar las tareas no vencidas por fecha
+          this.tasks = this.sortTasks(tasksNoVencidas);
         },
         error: (err) => {
           console.error('Error al cargar las tareas:', err);
@@ -162,7 +166,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
         }
       });
     }
-  } 
+  }
+  
 
   // Ordenar las tareas por fecha de vencimiento
   sortTasks(tasks: any[]): any[] {
