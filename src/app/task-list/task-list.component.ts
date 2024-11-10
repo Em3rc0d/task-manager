@@ -4,7 +4,7 @@ import { TaskService } from '../../task.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { Subscription } from 'rxjs';
-import * as L from 'leaflet';
+import { IpService } from '../../services/ip.service';
 
 @Component({
   selector: 'app-task-list',
@@ -16,6 +16,7 @@ import * as L from 'leaflet';
 export class TaskListComponent implements OnInit, OnDestroy {
   isQuoteModalOpen: boolean = false;  // Variable para manejar el estado del modal de cita
   isLocationModalOpen: boolean = false;  // Variable para manejar el estado del modal de ubicación
+  isIpModalOpen: boolean = false;  // Variable para manejar el estado del modal de IP
   isHolidayModalOpen: boolean = false;  // Variable para manejar el estado del modal de días festivos
   tasks: any[] = [];  // Array para almacenar las tareas
   usuario: any = null;  // Almacena el usuario autenticado
@@ -28,7 +29,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
   showForm: boolean = false;  // Si el formulario de tarea está visible
   private userSubscription: Subscription | null = null;  // Suscripción del usuario
   location: { latitude: number; longitude: number } | null = null;  // Ubicación del usuario
-  private map!: L.Map;  // Variable para el mapa
   holidays: any[] = [];  // Array para almacenar los días festivos
   quote: string | null = null;
   weather: {
@@ -49,12 +49,16 @@ export class TaskListComponent implements OnInit, OnDestroy {
     country: string;
     timezone: number;
   } | null = null;
-  private leafletMap!: L.Map;  // Cambiar el nombre de la variable
+  userIpv4: any;
+  ipInfov4: any;
+  ipInfov6: any;
+  userIpv6: any;
 
 
   constructor(
     private taskService: TaskService,
-    private auth: AuthService
+    private auth: AuthService,
+    private IpService: IpService
   ) {}
 
   // Al iniciar el componente, se obtiene el usuario y las tareas
@@ -65,15 +69,61 @@ export class TaskListComponent implements OnInit, OnDestroy {
         this.loadTasks();  
         this.loadHolidays();
         this.getRandomQuote();
-        this.getLocation();
-      }
-    });
+        this.getIpInfo();
+        }
+      });
   }
 
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
   ngOnDestroy(): void {
     this.userSubscription?.unsubscribe();
-    this.leafletMap?.remove();
+  }
+  
+  // Método para obtener la IP y la información de geolocalización
+  getIpInfo() {
+    // Obtener la IP del usuario
+    this.IpService.getUserIp().subscribe(
+      data => {
+        this.userIpv4 = data.ip;
+        console.log('IP del usuario:', this.userIpv4);
+        // Obtener información de la IP (IPv4)
+        this.IpService.getUserInfo(this.userIpv4).subscribe(
+          geoData => {
+            this.ipInfov4 = geoData;
+            console.log('Información de IP:', this.ipInfov4);
+          },
+          error => {
+            console.error('Error al obtener la información de IP:', error.message);
+          }
+        );
+      },
+      error => {
+        console.error('Error al obtener la IP del usuario:', error.message);
+      }
+    );
+
+    // Obtener la información de la IP (IPv6)
+    this.IpService.getGeoInfo().subscribe(
+      geoData => {
+        this.ipInfov6 = geoData;
+        this.userIpv6 = this.ipInfov6.ip;
+        console.log('Información de IP:', this.ipInfov6);
+      },
+      error => {
+        console.error('Error al obtener la información de IP:', error);
+      }
+    );
+  }
+
+  // Método para abrir el modal
+  openIpModal() {
+    this.getIpInfo();
+    this.isIpModalOpen = true;
+  }
+
+  // Método para cerrar el modal
+  closeIpModal() {
+    this.isIpModalOpen = false;
   }
 
   // Obtener la ubicación del usuario usando la API de geolocalización
@@ -85,7 +135,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
             latitude: position.coords.latitude ,  // Ajuste en las coordenadas
             longitude: position.coords.longitude ,  // Ajuste en las coordenadas
           };
-          this.initMap(this.location.latitude, this.location.longitude);
+          // this.initMap(this.location.latitude, this.location.longitude);
           this.getWeather(this.location.latitude, this.location.longitude);
           console.log('Ubicación obtenida:', this.location);
         },
@@ -112,26 +162,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
         }
       });
     }
-  }
-
-  // Inicializar el mapa con la ubicación obtenida
-  private async initMap(lat: number, lng: number, zoom: number = 13): Promise<void> {
-    if (typeof window !== 'undefined') {
-      const L = await import('leaflet');
-      this.leafletMap = L.map('map').setView([lat, lng], zoom);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(this.leafletMap);
-      L.marker([lat, lng])
-        .addTo(this.leafletMap)
-        .bindPopup('Estás aquí.')
-        .openPopup();
-    } else {
-      console.error('Leaflet no está disponible en el navegador.');
-    }
-  }
-  
+  } 
 
   // Ordenar las tareas por fecha de vencimiento
   sortTasks(tasks: any[]): any[] {

@@ -128,7 +128,7 @@
       class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
       aria-label="Obtener ubicación actual"
     >
-      Ver Ubicación
+      Ver Ubicación y Clima
     </button>
     <!-- Botón para abrir el modal de Días Festivos -->
     <button
@@ -136,6 +136,13 @@
       class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
     >
       Ver Días Festivos
+    </button>
+    <!-- Botón para abrir el modal de Ip -->
+    <button
+      (click)="isIpModalOpen = true"
+      class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
+    >
+      Ver Ip Actual
     </button>
   </div>
 
@@ -188,14 +195,6 @@
           <span class="font-bold text-blue-600">{{ location.longitude }}</span>
         </p>
       </div>
-
-      <!-- Mapa -->
-      <div
-        id="map"
-        class="mt-6 rounded-lg shadow-md border-gray-200"
-        style="height: 200px"
-        aria-label="Mapa de ubicación"
-      ></div>
 
       <!-- Clima -->
       <div
@@ -284,6 +283,38 @@
       <div class="mt-4 flex justify-center">
         <button
           (click)="isHolidayModalOpen = false"
+          class="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal de Ubicación -->
+  <div
+    *ngIf="isIpModalOpen"
+    class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
+    aria-labelledby="locationModalLabel"
+    role="dialog"
+    aria-hidden="true"
+  >
+    <div
+      class="bg-white p-6 rounded-lg shadow-xl w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/4"
+    >
+
+      <div *ngIf="ipInfov6" class="mt-6 text-center">
+        <h3 class="text-xl font-semibold text-gray-800">
+          Información de IP (IPv6)
+        </h3>
+        <p class="text-lg text-gray-600">
+          IP: <span class="font-bold text-blue-600">{{ userIpv6 }}</span>
+        </p>
+      </div>
+
+      <!-- Botón Cerrar -->
+      <div class="mt-4 flex justify-center">
+        <button
+          (click)="closeIpModal()"
           class="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200"
         >
           Cerrar
