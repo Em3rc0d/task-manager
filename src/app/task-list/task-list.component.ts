@@ -63,6 +63,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
         this.loadTasks();  
         this.loadHolidays();
         this.getRandomQuote();
+        this.getLocation();
       }
     });
   }
