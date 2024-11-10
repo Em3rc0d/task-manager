@@ -256,15 +256,13 @@ export class TaskListComponent implements OnInit, OnDestroy {
   
     this.taskService.getHolidays().subscribe({
       next: (response) => {
-        // Verifica si el valor es un arreglo
+        // Verificar si response.response.holidays es un arreglo
         const holidays = Array.isArray(response.response.holidays)
-          ? response.response.holidays
-              .map((holiday: any) => {
-                holiday.date.iso = new Date(holiday.date.iso);
-                return holiday;
-              })
-              .filter((holiday: any) => holiday.date.iso >= today && holiday.date.iso <= thirtyDaysFromNow)
-              .sort((a: any, b: any) => a.date.iso.getTime() - b.date.iso.getTime())
+          ? response.response.holidays.map((holiday: any) => {
+              holiday.date.iso = new Date(holiday.date.iso);
+              return holiday;
+            }).filter((holiday: any) => holiday.date.iso >= today && holiday.date.iso <= thirtyDaysFromNow)
+            .sort((a: any, b: any) => a.date.iso.getTime() - b.date.iso.getTime())
           : [];  // Si no es un arreglo, inicializar como vacío.
   
         this.holidays = holidays;
@@ -275,7 +273,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
       }
     });
   }
-  
   
   getRandomQuote(): void {
     fetch('https://api.quotable.io/random')
