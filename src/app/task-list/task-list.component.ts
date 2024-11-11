@@ -80,12 +80,12 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.userSubscription = this.auth.user$.subscribe((user) => {
       if (user) {
         this.usuario = user;
-        this.loadTasks();
-        this.loadHolidays();
-        this.getRandomQuote();
-        this.getIpInfo();
       }
     });
+    this.loadTasks();
+    this.loadHolidays();
+    this.getRandomQuote();
+    this.getIpInfo();
   }
 
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
