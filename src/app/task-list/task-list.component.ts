@@ -1,12 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TaskService } from '../../services/task.service';
+import { TaskService } from '../../task.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { Subscription } from 'rxjs';
 import { IpService } from '../../services/ip.service';
-import { WeatherService } from '../../services/weather.service';
-import { QuoteService } from '../../services/quote.service';
 
 // Definir el tipo de prioridad para mayor seguridad
 type Priority = 'Alta' | 'Media' | 'Baja';
@@ -70,9 +68,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   constructor(
     private taskService: TaskService,
     private auth: AuthService,
-    private IpService: IpService,
-    private weatherService: WeatherService,
-    private quoteService: QuoteService
+    private IpService: IpService
   ) {}
 
   // Al iniciar el componente, se obtiene el usuario y las tareas
@@ -362,14 +358,15 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   getRandomQuote(): void {
-    this.quoteService.getRandomQuote().subscribe(
-      (data) => {
-        this.quote = data.content;
-      },
-      (error) => {
+    fetch('https://api.quotable.io/random')
+      .then((response) => response.json())
+      .then((data) => {
+        const quote = data.content; // Obtener la cita
+        this.quote = quote;
+      })
+      .catch((error) => {
         console.error('Error al obtener la cita:', error);
-      }
-    );
+      });
   }
 
   getWeather(latitude: number, longitude: number): void {
