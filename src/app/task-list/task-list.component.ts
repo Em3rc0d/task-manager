@@ -84,6 +84,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
         this.getIpInfo();
         this.loadHolidays();
         this.getRandomQuote();
+        this.getLocation();
       } else {
         alert('No se ha encontrado un usuario válido.');
         this.router.navigate(['/welcome']);  // Opcionalmente redirigir a la página de bienvenida
