@@ -168,7 +168,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
       this.taskService.getTasksByUserId(this.usuario.sub).subscribe({
         next: (data: Task[]) => {
           let filteredTasks = this.filterTasks(data);
-          this.tasks = this.sortTasks(filteredTasks.reverse()); // Ordenar las tareas después de filtrarlas
+          this.tasks = this.sortTasks(filteredTasks); // Ordenar las tareas después de filtrarlas
         },
         error: (err) => {
           console.error('Error al cargar las tareas:', err);
