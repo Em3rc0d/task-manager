@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 import { IpService } from '../../services/ip.service';
 
 // Definir el tipo de prioridad para mayor seguridad
-type Priority = 'high' | 'medium' | 'low';
+type Priority = 'Alta' | 'Media' | 'Baja';
 
 // Asegurarse de que las tareas tienen un tipo claro
 interface Task {
@@ -194,7 +194,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
   // Ordenar las tareas por fecha o prioridad
   sortTasks(tasks: Task[]): Task[] {
     // Asegurarse de que high prioridad sea la más alta
-    const priorityLevels = { high: 1, medium: 2, low: 3 };
+    const priorityLevels = { Alta: 1, Media: 2, Baja: 3 };
 
     return tasks.sort((a, b) => {
       if (this.sortOrder === 'dueDate') {
