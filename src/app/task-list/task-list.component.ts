@@ -1,10 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TaskService } from '../../task.service';
+import { TaskService } from '../../services/task.service';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService } from '../../services/auth.service';
 import { Subscription } from 'rxjs';
 import { IpService } from '../../services/ip.service';
+import { Router } from '@angular/router';
 
 // Definir el tipo de prioridad para mayor seguridad
 type Priority = 'Alta' | 'Media' | 'Baja';
@@ -36,7 +37,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
   priorities = ['Baja', 'Media', 'Alta']; // Opciones de prioridad
   editingTaskId: string | null = null; // ID de la tarea que se está editando
   showForm: boolean = false; // Si el formulario de tarea está visible
-  private userSubscription: Subscription | null = null; // Suscripción del usuario
   location: { latitude: number; longitude: number } | null = null; // Ubicación del usuario
   holidays: any[] = []; // Array para almacenar los días festivos
   quote: string | null = null;
@@ -67,26 +67,30 @@ export class TaskListComponent implements OnInit, OnDestroy {
 
   constructor(
     private taskService: TaskService,
-    private auth: AuthService,
-    private IpService: IpService
-  ) {}
+    private authService: AuthService,
+    private IpService: IpService,
+    private router: Router
+    ) {}
 
   // Al iniciar el componente, se obtiene el usuario y las tareas
   ngOnInit(): void {
-    this.userSubscription = this.auth.user$.subscribe((user) => {
-      if (user) {
-        this.usuario = user;
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/welcome']);  // Redirige si no está autenticado
+    } else {
+      this.usuario = localStorage.getItem('userEmail');
+      console.log(this.usuario);
+      if (this.usuario) {
         this.loadTasks();
-        this.loadHolidays();
-        this.getRandomQuote();
-        this.getIpInfo();
+      } else {
+        alert('No se ha encontrado un usuario válido.');
+        this.router.navigate(['/welcome']);  // Opcionalmente redirigir a la página de bienvenida
       }
-    });
+    }
   }
-
+  
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
   ngOnDestroy(): void {
-    this.userSubscription?.unsubscribe();
+    localStorage.removeItem('userEmail');
   }
 
   // Método para obtener la IP y la información de geolocalización
@@ -101,6 +105,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
           (geoData) => {
             this.ipInfov4 = geoData;
             console.log('Información de IP:', this.ipInfov4);
+            // console.log(this.usuario);
           },
           (error) => {
             console.error(
@@ -163,12 +168,13 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   // Método para cargar las tareas con el filtro y ordenación
+
   loadTasks(): void {
     if (this.usuario) {
-      this.taskService.getTasksByUserId(this.usuario.sub).subscribe({
+      this.taskService.getTasksByUserEmail(this.usuario).subscribe({
         next: (data: Task[]) => {
           let filteredTasks = this.filterTasks(data);
-          this.tasks = this.sortTasks(filteredTasks); // Ordenar las tareas después de filtrarlas
+          this.tasks = this.sortTasks(filteredTasks);
         },
         error: (err) => {
           console.error('Error al cargar las tareas:', err);
@@ -178,7 +184,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Filtrar las tareas basadas en el filtro seleccionado
   filterTasks(tasks: Task[]): Task[] {
     const now = new Date();
     switch (this.filter) {
@@ -187,26 +192,22 @@ export class TaskListComponent implements OnInit, OnDestroy {
       case 'overdue':
         return tasks.filter((task) => new Date(task.dueDate) < now);
       default:
-        return tasks; // Mostrar todas las tareas si no hay filtro
+        return tasks;
     }
   }
 
-  // Ordenar las tareas por fecha o prioridad
   sortTasks(tasks: Task[]): Task[] {
-    // Asegurarse de que high prioridad sea la más alta
     const priorityLevels = { Alta: 1, Media: 2, Baja: 3 };
-
     return tasks.sort((a, b) => {
       if (this.sortOrder === 'dueDate') {
         return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
       } else if (this.sortOrder === 'priority') {
-        // Asegurarse de que la prioridad alta sea la más baja en el orden
         return priorityLevels[a.priority] - priorityLevels[b.priority];
       }
       return 0;
     });
   }
-  // Agregar una nueva tarea o actualizar una tarea existente
+
   addTask(): void {
     if (!this.newTaskTitle.trim()) {
       alert('El título de la tarea es obligatorio.');
@@ -218,18 +219,18 @@ export class TaskListComponent implements OnInit, OnDestroy {
       description: this.newTaskDescription,
       dueDate: this.newTaskDueDate,
       priority: this.newTaskPriority,
-      userId: this.usuario.sub,
+      userId: this.usuario,
       completed: false,
     };
 
     if (this.editingTaskId) {
-      this.updateTask(); // Si estamos editando, actualizar la tarea
+      this.updateTask();
     } else {
       this.taskService.addTask(newTask).subscribe({
         next: (task) => {
-          this.tasks.push(task); // Agregar la nueva tarea al array
-          this.tasks = this.sortTasks(this.tasks); // Ordenar las tareas
-          this.resetForm(); // Limpiar el formulario
+          this.tasks.push(task);
+          this.tasks = this.sortTasks(this.tasks);
+          this.resetForm();
         },
         error: (err) => {
           console.error('Error al agregar la tarea:', err);
@@ -237,28 +238,24 @@ export class TaskListComponent implements OnInit, OnDestroy {
         },
       });
     }
-    this.loadTasks();
   }
 
-  // Actualizar una tarea existente
   updateTask(): void {
     const updatedTask = {
       title: this.newTaskTitle,
       description: this.newTaskDescription,
       dueDate: this.newTaskDueDate,
       priority: this.newTaskPriority,
-      userId: this.usuario.sub,
+      userId: this.usuario,
       completed: false,
     };
 
-    if (this.editingTaskId !== null) {
+    if (this.editingTaskId) {
       this.taskService.updateTask(this.editingTaskId, updatedTask).subscribe({
         next: (task) => {
-          const index = this.tasks.findIndex(
-            (t) => t._id === this.editingTaskId
-          );
-          this.tasks[index] = task; // Actualizar la tarea en el array
-          this.resetForm(); // Limpiar el formulario
+          const index = this.tasks.findIndex((t) => t._id === this.editingTaskId);
+          this.tasks[index] = task;
+          this.resetForm();
         },
         error: (err) => {
           console.error('Error al actualizar la tarea:', err);
@@ -267,6 +264,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
       });
     }
   }
+
 
   // Iniciar la edición de una tarea
   startEditing(task: any): void {
@@ -423,8 +421,8 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   // Cerrar sesión
-  logOut(): void {
-    this.auth.logout();
+  logout(): void {
+    this.authService.logout();  // Cierra la sesión
   }
 }
 

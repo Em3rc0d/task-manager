@@ -1,24 +1,97 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
+import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-welcome',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule],
   templateUrl: './welcome.component.html',
-  styleUrl: './welcome.component.css'
+  styleUrls: ['./welcome.component.css']
 })
 export class WelcomeComponent implements OnInit {
-  constructor(public auth: AuthService, private router: Router) {}
+  email: string = '';
+  password: string = '';
+  errorMessage: string = '';
+
+  constructor(public authService: AuthService, private router: Router) {}
+
   ngOnInit(): void {
-      this.auth.isAuthenticated$.subscribe((isAuthenticated) => {
-        if(isAuthenticated) {
-          this.router.navigate(['/tasks']);
-        }
-      })
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/tasks']); // Redirigir si ya está autenticado
+      localStorage.setItem('userEmail', this.email);
+      console.log(localStorage.getItem('userEmail'));
+    }
   }
-  login() {
-    this.auth.loginWithRedirect();
+
+  // Función para validar email
+  validateEmail(email: string): boolean {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  }
+
+  // Función para validar la contraseña
+  validatePassword(password: string): boolean {
+    return password.length >= 6;  // Asegúrate de que la contraseña tenga al menos 6 caracteres
+  }
+
+  login(): void {
+    this.errorMessage = '';  // Limpiar errores previos
+
+    // Validar email y contraseña
+    if (!this.validateEmail(this.email)) {
+      this.errorMessage = 'Por favor ingrese un correo electrónico válido.';
+      return;
+    }
+    if (!this.validatePassword(this.password)) {
+      this.errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
+      return;
+    }
+
+    // Si todo está validado, continuar con el login
+    this.authService.login(this.email, this.password).subscribe(
+      (response) => {
+        // Al obtener el token y el correo, guardamos en localStorage
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userEmail', this.email); // Guardar el email en localStorage
+        console.log('Login exitoso', response);
+        console.log('Email guardado en localStorage:', localStorage.getItem('userEmail'));
+        this.router.navigate(['/tasks']);
+      },
+      (error) => {
+        console.error('Error de login', error);
+        this.errorMessage = 'Error al autenticar al usuario, por favor verifica tus credenciales.';
+      }
+    );
+  }
+
+  register(): void {
+    this.errorMessage = '';  // Limpiar errores previos
+
+    // Validar email y contraseña
+    if (!this.validateEmail(this.email)) {
+      this.errorMessage = 'Por favor ingrese un correo electrónico válido.';
+      return;
+    }
+    if (!this.validatePassword(this.password)) {
+      this.errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
+      return;
+    }
+
+    // Si todo está validado, continuar con el registro
+    this.authService.register(this.email, this.password).subscribe(
+      (response) => {
+        // Al registrar al usuario, puedes redirigirlo o mostrar un mensaje de éxito
+        console.log('Registro exitoso', response);
+        alert('Usuario registrado con éxito');
+        this.router.navigate(['/login']);  // Redirigir a la página de login
+      },
+      (error) => {
+        console.error('Error de registro', error);
+        this.errorMessage = 'Error al registrar al usuario, por favor intenta de nuevo.';
+      }
+    );
   }
 }
