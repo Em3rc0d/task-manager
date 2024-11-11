@@ -1,10 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TaskService } from '../../task.service';
+import { TaskService } from '../../services/task.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@auth0/auth0-angular';
 import { Subscription } from 'rxjs';
 import { IpService } from '../../services/ip.service';
+import { WeatherService } from '../../services/weather.service';
+import { QuoteService } from '../../services/quote.service';
 
 // Definir el tipo de prioridad para mayor seguridad
 type Priority = 'Alta' | 'Media' | 'Baja';
@@ -68,7 +70,9 @@ export class TaskListComponent implements OnInit, OnDestroy {
   constructor(
     private taskService: TaskService,
     private auth: AuthService,
-    private IpService: IpService
+    private IpService: IpService,
+    private weatherService: WeatherService,
+    private quoteService: QuoteService
   ) {}
 
   // Al iniciar el componente, se obtiene el usuario y las tareas
@@ -358,48 +362,44 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   getRandomQuote(): void {
-    fetch('https://api.quotable.io/random')
-      .then((response) => response.json())
-      .then((data) => {
-        const quote = data.content; // Obtener la cita
-        this.quote = quote;
-      })
-      .catch((error) => {
+    this.quoteService.getRandomQuote().subscribe(
+      (data) => {
+        this.quote = data.content;
+      },
+      (error) => {
         console.error('Error al obtener la cita:', error);
-      });
+      }
+    );
   }
 
   getWeather(latitude: number, longitude: number): void {
-    const apiKey = '2a0bd20450d7b6125ed140498e6ddc11';
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=es`;
-
-    fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
+    this.weatherService.getWeather(latitude, longitude).subscribe(
+      (data) => {
         this.weather = {
-          temp: data.main.temp, // Temperatura actual
-          feels_like: data.main.feels_like, // Sensación térmica
-          temp_min: data.main.temp_min, // Temperatura mínima
-          temp_max: data.main.temp_max, // Temperatura máxima
-          pressure: data.main.pressure, // Presión atmosférica
-          humidity: data.main.humidity, // Humedad relativa
-          description: data.weather[0].description, // Descripción del clima
-          iconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`, // Icono del clima
-          wind_speed: data.wind.speed, // Velocidad del viento
-          wind_deg: data.wind.deg, // Dirección del viento (grados)
-          wind_gust: data.wind.gust, // Ráfagas del viento (si disponible)
-          clouds: data.clouds.all, // Porcentaje de nubosidad
-          visibility: data.visibility, // Visibilidad en metros
-          city: data.name, // Nombre de la ciudad
-          country: data.sys.country, // País
-          timezone: data.timezone, // Zona horaria
+          temp: data.main.temp,
+          feels_like: data.main.feels_like,
+          temp_min: data.main.temp_min,
+          temp_max: data.main.temp_max,
+          pressure: data.main.pressure,
+          humidity: data.main.humidity,
+          description: data.weather[0].description,
+          iconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`,
+          wind_speed: data.wind.speed,
+          wind_deg: data.wind.deg,
+          wind_gust: data.wind.gust,
+          clouds: data.clouds.all,
+          visibility: data.visibility,
+          city: data.name,
+          country: data.sys.country,
+          timezone: data.timezone,
         };
 
         console.log('Clima actual:', this.weather);
-      })
-      .catch((error) => {
+      },
+      (error) => {
         console.error('Error al obtener el clima:', error);
-      });
+      }
+    );
   }
 
   // Métodos para abrir y cerrar el modal de cita
