@@ -81,6 +81,9 @@ export class TaskListComponent implements OnInit, OnDestroy {
       console.log(this.usuario);
       if (this.usuario) {
         this.loadTasks();
+        this.getIpInfo();
+        this.loadHolidays();
+        this.getRandomQuote();
       } else {
         alert('No se ha encontrado un usuario válido.');
         this.router.navigate(['/welcome']);  // Opcionalmente redirigir a la página de bienvenida
