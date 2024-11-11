@@ -56,8 +56,6 @@ export class WelcomeComponent implements OnInit {
         // Al obtener el token y el correo, guardamos en localStorage
         localStorage.setItem('token', response.token);
         localStorage.setItem('userEmail', this.email); // Guardar el email en localStorage
-        console.log('Login exitoso', response);
-        console.log('Email guardado en localStorage:', localStorage.getItem('userEmail'));
         this.router.navigate(['/tasks']);
       },
       (error) => {

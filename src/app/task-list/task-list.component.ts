@@ -78,7 +78,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
       this.router.navigate(['/welcome']);  // Redirige si no está autenticado
     } else {
       this.usuario = localStorage.getItem('userEmail');
-      console.log(this.usuario);
       if (this.usuario) {
         this.loadTasks();
         this.getIpInfo();
