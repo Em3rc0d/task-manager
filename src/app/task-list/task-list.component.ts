@@ -80,12 +80,12 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.userSubscription = this.auth.user$.subscribe((user) => {
       if (user) {
         this.usuario = user;
+        this.loadTasks();
+        this.loadHolidays();
+        this.getRandomQuote();
+        this.getIpInfo();
       }
     });
-    this.loadTasks();
-    this.loadHolidays();
-    this.getRandomQuote();
-    this.getIpInfo();
   }
 
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
@@ -373,33 +373,36 @@ export class TaskListComponent implements OnInit, OnDestroy {
   }
 
   getWeather(latitude: number, longitude: number): void {
-    this.weatherService.getWeather(latitude, longitude).subscribe(
-      (data) => {
+    const apiKey = '2a0bd20450d7b6125ed140498e6ddc11';
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=es`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
         this.weather = {
-          temp: data.main.temp,
-          feels_like: data.main.feels_like,
-          temp_min: data.main.temp_min,
-          temp_max: data.main.temp_max,
-          pressure: data.main.pressure,
-          humidity: data.main.humidity,
-          description: data.weather[0].description,
-          iconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`,
-          wind_speed: data.wind.speed,
-          wind_deg: data.wind.deg,
-          wind_gust: data.wind.gust,
-          clouds: data.clouds.all,
-          visibility: data.visibility,
-          city: data.name,
-          country: data.sys.country,
-          timezone: data.timezone,
+          temp: data.main.temp, // Temperatura actual
+          feels_like: data.main.feels_like, // Sensación térmica
+          temp_min: data.main.temp_min, // Temperatura mínima
+          temp_max: data.main.temp_max, // Temperatura máxima
+          pressure: data.main.pressure, // Presión atmosférica
+          humidity: data.main.humidity, // Humedad relativa
+          description: data.weather[0].description, // Descripción del clima
+          iconUrl: `https://openweathermap.org/img/wn/${data.weather[0].icon}.png`, // Icono del clima
+          wind_speed: data.wind.speed, // Velocidad del viento
+          wind_deg: data.wind.deg, // Dirección del viento (grados)
+          wind_gust: data.wind.gust, // Ráfagas del viento (si disponible)
+          clouds: data.clouds.all, // Porcentaje de nubosidad
+          visibility: data.visibility, // Visibilidad en metros
+          city: data.name, // Nombre de la ciudad
+          country: data.sys.country, // País
+          timezone: data.timezone, // Zona horaria
         };
 
         console.log('Clima actual:', this.weather);
-      },
-      (error) => {
+      })
+      .catch((error) => {
         console.error('Error al obtener el clima:', error);
-      }
-    );
+      });
   }
 
   // Métodos para abrir y cerrar el modal de cita
