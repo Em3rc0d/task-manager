@@ -77,7 +77,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
     if (!this.authService.isAuthenticated()) {
       this.router.navigate(['/welcome']);  // Redirige si no está autenticado
     } else {
-      this.usuario = localStorage.getItem('userEmail');
+      this.usuario = sessionStorage.getItem('userEmail');
       if (this.usuario) {
         this.loadTasks();
         this.getIpInfo();
@@ -93,10 +93,10 @@ export class TaskListComponent implements OnInit, OnDestroy {
   
   // Desuscribir la suscripción y eliminar el mapa cuando se destruya el componente
   ngOnDestroy(): void {
-    localStorage.removeItem('userEmail');
+    sessionStorage.removeItem('userEmail');
   }
 
-  // Método para obtener la IP y la información de geolocalización
+  // Método para obtener la IP y la información de geosessionización
   getIpInfo() {
     // Obtener la IP del usuario
     this.IpService.getUserIp().subscribe(
@@ -146,7 +146,7 @@ export class TaskListComponent implements OnInit, OnDestroy {
     this.isIpModalOpen = false;
   }
 
-  // Obtener la ubicación del usuario usando la API de geolocalización
+  // Obtener la ubicación del usuario usando la API de geosessionización
   getLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(

@@ -21,8 +21,8 @@ export class WelcomeComponent implements OnInit {
   ngOnInit(): void {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/tasks']); // Redirigir si ya está autenticado
-      localStorage.setItem('userEmail', this.email);
-      console.log(localStorage.getItem('userEmail'));
+      sessionStorage.setItem('userEmail', this.email);
+      console.log(sessionStorage.getItem('userEmail'));
     }
   }
 
@@ -53,9 +53,9 @@ export class WelcomeComponent implements OnInit {
     // Si todo está validado, continuar con el login
     this.authService.login(this.email, this.password).subscribe(
       (response) => {
-        // Al obtener el token y el correo, guardamos en localStorage
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('userEmail', this.email); // Guardar el email en localStorage
+        // Al obtener el token y el correo, guardamos en sessionStorage
+        sessionStorage.setItem('token', response.token);
+        sessionStorage.setItem('userEmail', this.email); // Guardar el email en sessionStorage
         this.router.navigate(['/tasks']);
       },
       (error) => {
