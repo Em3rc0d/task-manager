@@ -105,7 +105,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
           (geoData) => {
             this.ipInfov4 = geoData;
             console.log('Información de IP:', this.ipInfov4);
-            // console.log(this.usuario);
           },
           (error) => {
             console.error(
