@@ -6,6 +6,7 @@ import { provideClientHydration } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 const uri = "http://localhost:4200";
 const uri1 = "https://task-manager-plum-xi.vercel.app";
+const uri2 = "http://tarea-angular-dsi.s3-website.us-east-2.amazonaws.com";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,7 +18,7 @@ export const appConfig: ApplicationConfig = {
       domain: 'dev-gw3t1o22is7w2ptm.us.auth0.com',
       clientId: 'Zeq3IWP7ZdJSDoRscp8s6YIOpFrSYbHY',
       authorizationParams: {
-        redirect_uri: typeof window !== 'undefined' ? window.location.origin : "${uri1}"
+        redirect_uri: typeof window !== 'undefined' ? window.location.origin : "${uri2}"
       }
     })
   ],
