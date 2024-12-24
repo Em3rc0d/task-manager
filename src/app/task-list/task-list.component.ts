@@ -82,7 +82,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
         this.loadTasks();
         this.getIpInfo();
         this.loadHolidays();
-        this.getRandomQuote();
         this.getLocation();
       } else {
         alert('No se ha encontrado un usuario válido.');
@@ -357,18 +356,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
     });
   }
 
-  getRandomQuote(): void {
-    fetch('https://api.quotable.io/random')
-      .then((response) => response.json())
-      .then((data) => {
-        const quote = data.content; // Obtener la cita
-        this.quote = quote;
-      })
-      .catch((error) => {
-        console.error('Error al obtener la cita:', error);
-      });
-  }
-
   getWeather(latitude: number, longitude: number): void {
     const apiKey = '2a0bd20450d7b6125ed140498e6ddc11';
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric&lang=es`;
@@ -400,16 +387,6 @@ export class TaskListComponent implements OnInit, OnDestroy {
       .catch((error) => {
         console.error('Error al obtener el clima:', error);
       });
-  }
-
-  // Métodos para abrir y cerrar el modal de cita
-  openQuoteModal() {
-    this.isQuoteModalOpen = true;
-    this.getRandomQuote(); // Obtener cita aleatoria cuando se abre el modal
-  }
-
-  closeQuoteModal() {
-    this.isQuoteModalOpen = false;
   }
 
   // Métodos para abrir y cerrar el modal de ubicación

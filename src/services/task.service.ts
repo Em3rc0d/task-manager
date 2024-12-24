@@ -15,7 +15,7 @@ export class TaskService {
 
   // Método para obtener los encabezados con el token
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return new HttpHeaders({
       'Authorization': `Bearer ${token}` // Agregar el token en los encabezados
     });

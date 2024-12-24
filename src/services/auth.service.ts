@@ -1,14 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
-import { HttpHeaders } from '@angular/common/http';
-
-interface usuario {
-  email: string;
-  password: string;
-  token: string;
-}
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +11,11 @@ export class AuthService {
   private apiUrl = 'https://backend-task-m.vercel.app/auth'; // Cambia esto según tu API
   private tokenKey = 'token';
 
-  private key = localStorage.getItem('userEmail');
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object // Inyección para verificar si el código corre en el navegador
+  ) {}
 
   // Login con JWT
   login(email: string, password: string): Observable<any> {
@@ -27,27 +24,39 @@ export class AuthService {
 
   // Logout: elimina el token
   logout(): void {
-    sessionStorage.removeItem(this.tokenKey);
+    if (this.isBrowser()) {
+      sessionStorage.removeItem(this.tokenKey);
+    }
     this.router.navigate(['/welcome']);
   }
 
   // Guarda el token en sessionStorage
   setToken(token: string): void {
-    sessionStorage.setItem(this.tokenKey, token);
+    if (this.isBrowser()) {
+      sessionStorage.setItem(this.tokenKey, token);
+    }
   }
 
   // Verifica si el usuario está autenticado (si existe el token)
   isAuthenticated(): boolean {
-    return !!sessionStorage.getItem(this.tokenKey);
+    return this.isBrowser() && !!sessionStorage.getItem(this.tokenKey);
   }
 
   // Obtener el token
   getToken(): string | null {
-    return sessionStorage.getItem(this.tokenKey);
+    if (this.isBrowser()) {
+      return sessionStorage.getItem(this.tokenKey);
+    }
+    return null;
   }
 
   // Registrar usuario
   register(email: string, password: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/register`, { email, password });
+  }
+
+  // Verifica si el código corre en el navegador
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
   }
 }

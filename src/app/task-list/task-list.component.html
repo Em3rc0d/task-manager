@@ -155,12 +155,6 @@
 
   <!-- Botones para los Modales -->
   <div class="w-full md:w-1/5 mt-6 space-y-4">
-    <button
-      (click)="openQuoteModal()"
-      class="w-full p-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all ease-in-out duration-200"
-    >
-      Obtener Cita
-    </button>
 
     <button
       (click)="openLocationModal()"
@@ -183,35 +177,6 @@
     >
       Ver Ip Actual
     </button>
-  </div>
-
-  <!-- Modal de Cita Aleatoria -->
-  <div
-    *ngIf="isQuoteModalOpen"
-    class="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50"
-    aria-labelledby="quoteModalLabel"
-    role="dialog"
-    aria-hidden="true"
-  >
-    <div class="bg-white p-6 rounded-lg shadow-xl w-full sm:w-1/3">
-      <h2
-        class="text-xl font-semibold text-center mb-4 text-blue-700"
-        id="quoteModalLabel"
-      >
-        Cita Aleatoria
-      </h2>
-      <div class="text-center">
-        <p class="text-lg text-gray-800">"{{ quote }}"</p>
-      </div>
-      <div class="mt-4 flex justify-center">
-        <button
-          (click)="closeQuoteModal()"
-          class="w-full p-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all ease-in-out duration-200"
-        >
-          Cerrar
-        </button>
-      </div>
-    </div>
   </div>
 
   <!-- Modal de Ubicación -->
